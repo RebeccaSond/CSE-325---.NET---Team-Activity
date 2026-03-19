@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     "net10.0": {
-      "Microsoft.AspNetCore.App.Internal.Assets/10.0.4": {
+      "Microsoft.AspNetCore.App.Internal.Assets/10.0.3": {
         "type": "package",
         "build": {
           "build/Microsoft.AspNetCore.App.Internal.Assets.props": {},
@@ -15,10 +15,10 @@
     }
   },
   "libraries": {
-    "Microsoft.AspNetCore.App.Internal.Assets/10.0.4": {
-      "sha512": "M942X5Vy726SlvFBuoAC4cDczEMlPAFt1mmyFlrkw/QcpdVwVU0DkF4P9JabxX6eWNm9RvaYZHe25FN7oXoxpQ==",
+    "Microsoft.AspNetCore.App.Internal.Assets/10.0.3": {
+      "sha512": "mr3Zn+ht8lijYvlMIasftw9opU9hsLKDdnOgQMmYI3RjWPJLOF9l8+YHDseRkTs97wOrULmJgo/NDCmzL/EGDg==",
       "type": "package",
-      "path": "microsoft.aspnetcore.app.internal.assets/10.0.4",
+      "path": "microsoft.aspnetcore.app.internal.assets/10.0.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -34,30 +34,30 @@
         "build/Microsoft.AspNetCore.App.Internal.Assets.targets",
         "buildMultiTargeting/Microsoft.AspNetCore.App.Internal.Assets.targets",
         "buildTransitive/Microsoft.AspNetCore.App.Internal.Assets.targets",
-        "microsoft.aspnetcore.app.internal.assets.10.0.4.nupkg.sha512",
+        "microsoft.aspnetcore.app.internal.assets.10.0.3.nupkg.sha512",
         "microsoft.aspnetcore.app.internal.assets.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
-      "Microsoft.AspNetCore.App.Internal.Assets >= 10.0.4"
+      "Microsoft.AspNetCore.App.Internal.Assets >= 10.0.3"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\kevin\\.nuget\\packages\\": {}
+    "C:\\Users\\jackl\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
+      "projectUniqueName": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
       "projectName": "RestaurantOrderingSystem",
-      "projectPath": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
-      "packagesPath": "C:\\Users\\kevin\\.nuget\\packages\\",
-      "outputPath": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\obj\\",
+      "projectPath": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
+      "packagesPath": "C:\\Users\\jackl\\.nuget\\packages\\",
+      "outputPath": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\kevin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\jackl\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -90,7 +90,7 @@
           "Microsoft.AspNetCore.App.Internal.Assets": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[10.0.4, )",
+            "version": "[10.0.3, )",
             "autoReferenced": true
           }
         },
@@ -113,7 +113,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

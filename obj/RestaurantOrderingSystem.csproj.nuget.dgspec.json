@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj": {}
+    "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj": {}
   },
   "projects": {
-    "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj": {
+    "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
+        "projectUniqueName": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
         "projectName": "RestaurantOrderingSystem",
-        "projectPath": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
-        "packagesPath": "C:\\Users\\kevin\\.nuget\\packages\\",
-        "outputPath": "D:\\Kevin\\Documentos\\BYUI\\CSE-325---.NET---Team-Activity\\obj\\",
+        "projectPath": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\RestaurantOrderingSystem.csproj",
+        "packagesPath": "C:\\Users\\jackl\\.nuget\\packages\\",
+        "outputPath": "E:\\BYU\\CSE325\\CSE-325---.NET---Team-Activity\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\kevin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\jackl\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -47,7 +47,7 @@
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.4, )",
+              "version": "[10.0.3, )",
               "autoReferenced": true
             }
           },
@@ -70,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
