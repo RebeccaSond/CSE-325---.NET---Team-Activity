@@ -1,30 +1,230 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">RestaurantOrderingSystem</a>
+﻿@rendermode InteractiveServer
+
+<div class="navbar-container">
+    <div class="nav-brand">
+        <a href="" @onclick="CloseMenu">
+            <img src="/images/BiteZone_Logo.jpg" alt="BiteZone Logo" class="logo-img" />
+            <span class="brand-text"><span>Bite</span>Zone</span>
+        </a>
+        
+        @* The button that triggers the C# logic *@
+        <button type="button" class="mobile-toggle" @onclick="ToggleNavMenu">
+            @if (collapseNavMenu)
+            {
+                <i class="bi bi-list"></i>
+            }
+            else
+            {
+                <i class="bi bi-x-lg"></i>
+            }
+        </button>
+    </div>
+
+    @* The menu content is controlled by the 'show-menu' class *@
+    <div class="nav-content @(collapseNavMenu ? "" : "show-menu")">
+        <nav class="main-nav">
+            <NavLink class="nav-block" href="menu" @onclick="CloseMenu" Match="NavLinkMatch.All">
+                <i class="bi bi-book"></i>
+                <span>MENU</span>
+            </NavLink>
+            <NavLink class="nav-block" href="orders" @onclick="CloseMenu">
+                <i class="bi bi-bag-heart"></i>
+                <span>MY ORDERS</span>
+            </NavLink>
+            <NavLink class="nav-block" href="about" @onclick="CloseMenu">
+                <i class="bi bi-info-circle"></i>
+                <span>ABOUT US</span>
+            </NavLink>
+        </nav>
+
+        <div class="nav-right">
+            <NavLink class="nav-block login-block" href="login" @onclick="CloseMenu">
+                <i class="bi bi-person"></i>
+                <span>LOG IN</span>
+            </NavLink>
+
+            <NavLink class="nav-block cart-block" href="cart" @onclick="CloseMenu">
+                <div class="cart-wrapper">
+                    <i class="bi bi-cart3"></i>
+                    <span class="cart-badge">0</span>
+                </div>
+                <span>CART</span>
+            </NavLink>
+        </div>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private bool collapseNavMenu = true;
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    private void ToggleNavMenu()
+    {
+        Console.WriteLine("asdf"); // This will now show in the server/browser console
+        collapseNavMenu = !collapseNavMenu;
+        StateHasChanged(); // Manually tell Blazor to re-render the UI
+    }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
+    private void CloseMenu()
+    {
+        collapseNavMenu = true;
+    }
+}
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<style>
+    :root {
+        --bite-purple: #3c3f6a;
+        --bite-purple-dark: #2d2f50;
+        --bite-yellow: #ffcc33;
+        --bite-red: #ff4747;
+        --bite-white: #ffffff;
+        --nav-height: 80px;
+    }
 
+    .navbar-container {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bite-purple);
+        border-bottom: 3px solid var(--bite-yellow);
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: var(--nav-height);
+        padding: 0 1.5rem;
+        background-color: var(--bite-purple);
+        z-index: 101;
+    }
+
+    .nav-brand a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        gap: 10px;
+    }
+
+    .logo-img {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+    }
+
+    .brand-text {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -1px;
+    }
+
+    .brand-text span {
+        color: var(--bite-yellow);
+    }
+
+    .mobile-toggle {
+        background: var(--bite-purple-dark);
+        border: 1px solid var(--bite-yellow);
+        color: var(--bite-yellow);
+        font-size: 1.5rem;
+        padding: 5px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+    }
+
+    /* MOBILE MENU LOGIC */
+    .nav-content {
+        background-color: var(--bite-purple-dark);
+        display: none;
+        /* Hidden by default */
+        flex-direction: column;
+    }
+
+    .nav-content.show-menu {
+        display: flex !important;
+        /* Visible when button is clicked */
+    }
+
+    .nav-block {
+        display: flex;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        gap: 15px;
+    }
+
+    .nav-block i {
+        color: var(--bite-yellow);
+        font-size: 1.2rem;
+    }
+
+    .cart-wrapper {
+        position: relative;
+    }
+    
+    .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background: var(--bite-red);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    /* DESKTOP RE-STYLES */
+    @@media (min-width: 992px) {
+        .navbar-container {
+            flex-direction: row;
+            height: var(--nav-height);
+            align-items: stretch;
+        }
+
+        .mobile-toggle {
+            display: none;
+        }
+
+        .nav-content {
+            display: flex !important;
+            flex-direction: row;
+            background-color: transparent;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .main-nav,
+        .nav-right {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+        }
+
+        .nav-block {
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 25px;
+            border-bottom: none;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 100px;
+            gap: 5px;
+            font-size: 0.75rem;
+        }
+
+        .nav-block:hover {
+            background-color: var(--bite-purple-dark);
+            color: var(--bite-yellow);
+        }
+
+        .cart-block {
+            background-color: var(--bite-purple-dark);
+        }
+    }
+</style>
