@@ -1,0 +1,39 @@
+## .NET / Visual Studio
+bin/
+obj/
+out/
+.vscode/
+.vs/
+*.user
+*.userosscache
+*.sln.doccache
+
+## Specific to Blazor / Web
+wwwroot/dist/
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+## OS Files
+.DS_Store
+Thumbs.db
+
+## MongoDB / Database (if running local instances)
+*.log
+*.database
+data/db/
+
+## User-specific settings & Secrets
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.microsoft.visualstudio.rdt.view.state
+
+## Publishing / Deployment
+publish/
+*.release.config
+*.deploy.cmd
+*.ps1xml
