@@ -84,3 +84,15 @@ D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\compre
 D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\compressed\ipo9v50j57-{0}-8vyfqsqgz1-8vyfqsqgz1.gz
 D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\compressed\8m4ewjnguf-{0}-u9q1upor1n-u9q1upor1n.gz
 D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\compressed\uq1kftdodm-{0}-4d85u1mtcx-4d85u1mtcx.gz
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\DnsClient.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\MongoDB.Bson.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\MongoDB.Driver.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\MongoDB.EntityFrameworkCore.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\SharpCompress.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\Snappier.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\bin\Debug\net10.0\ZstdSharp.dll
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\RestaurantOrderingSystem.csproj.AssemblyReference.cache
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\Restaura.7E7D678E.Up2Date
+D:\Kevin\Documentos\BYUI\CSE-325---.NET---Team-Activity\obj\Debug\net10.0\compressed\rbeiszu7b9-{0}-yllknnbprb-yllknnbprb.gz
