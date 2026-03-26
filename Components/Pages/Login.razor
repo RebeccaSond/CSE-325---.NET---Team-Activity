@@ -58,7 +58,6 @@
 
         <div class="login-footer">
             <p>New here? <span class="highlight" @onclick="GoToRegister">Create an Account</span></p>
-            <p class="guest-link">Don't want an account? <span @onclick="OrderAsGuest">Order as Guest</span></p>
         </div>
     </div>
 </div>
@@ -319,16 +318,5 @@
         cursor: pointer;
         font-weight: 800;
         text-decoration: underline;
-    }
-
-    .guest-link {
-        margin-top: 10px;
-        font-size: 0.85rem;
-    }
-
-    .guest-link span {
-        color: var(--bz-purple);
-        font-weight: 700;
-        cursor: pointer;
     }
 </style>

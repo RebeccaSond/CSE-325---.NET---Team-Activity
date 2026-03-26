@@ -1,7 +1,9 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @attribute [Authorize]
+@inject NavigationManager Nav
 @rendermode InteractiveServer
 
 <div class="profile-container">
@@ -23,17 +25,15 @@
 
                     <div class="info-group">
                         <label>Email Address</label>
-                        <div class="info-value">@context.User.FindFirst(c => c.Type ==
-                                                        System.Security.Claims.ClaimTypes.Email)?.Value
-
+                        <div class="info-value">
+                            @context.User.FindFirst(ClaimTypes.Email)?.Value
                         </div>
                     </div>
 
                     <div class="info-group">
                         <label>Account Type</label>
-                        <div class="info-value badge-role">@context.User.FindFirst(c => c.Type ==
-                                                        System.Security.Claims.ClaimTypes.Role)?.Value
-                                
+                        <div class="info-value badge-role">
+                            @context.User.FindFirst(ClaimTypes.Role)?.Value
                         </div>
                     </div>
                 </div>
@@ -45,6 +45,29 @@
         </div>
     </div>
 </div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthStateTask == null)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        var authState = await AuthStateTask;
+        var user = authState.User;
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            // Redirect to login with a returnUrl so they come back here after signing in
+            Nav.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Nav.ToBaseRelativePath(Nav.Uri))}");
+        }
+    }
+}
 
 <style>
     .profile-container {

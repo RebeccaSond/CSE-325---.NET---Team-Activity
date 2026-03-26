@@ -14,6 +14,11 @@ builder.Services.AddOptions();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorizationCore();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CustomAuth";
+}).AddCookie("CustomAuth");
+
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
