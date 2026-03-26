@@ -1,10 +1,13 @@
 using RestaurantOrderingSystem.Components;
+using RestaurantOrderingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
 
