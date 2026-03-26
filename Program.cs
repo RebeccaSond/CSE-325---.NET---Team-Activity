@@ -19,6 +19,8 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddScoped<CartService>();
+
 builder.Services.AddScoped<MenuListService>();
 
 var app = builder.Build();
