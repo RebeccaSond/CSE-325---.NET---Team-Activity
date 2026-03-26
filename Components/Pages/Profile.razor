@@ -1,0 +1,141 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="avatar-circle">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <h2>User <span>Profile</span></h2>
+        </div>
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="profile-content">
+                    <div class="info-group">
+                        <label>Full Name</label>
+                        <div class="info-value">@context.User.Identity?.Name</div>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Email Address</label>
+                        <div class="info-value">@context.User.FindFirst(c => c.Type ==
+                                                        System.Security.Claims.ClaimTypes.Email)?.Value
+
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <label>Account Type</label>
+                        <div class="info-value badge-role">@context.User.FindFirst(c => c.Type ==
+                                                        System.Security.Claims.ClaimTypes.Role)?.Value
+                                
+                        </div>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+        <div class="profile-actions">
+            <button class="btn-edit" disabled>Edit Profile (Coming Soon)</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        padding: 4rem 2rem;
+        background-color: #f8f9fa;
+        min-height: 80vh;
+    }
+
+    .profile-card {
+        background: white;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border-top: 5px solid var(--bite-yellow, #ffcc33);
+    }
+
+    .profile-header {
+        text-align: center;
+        padding: 2rem;
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: white;
+        color: var(--bite-purple, #3c3f6a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1rem;
+    }
+
+    .profile-header h2 span {
+        color: var(--bite-yellow, #ffcc33);
+    }
+
+    .profile-content {
+        padding: 2rem;
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-group label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--bite-purple, #3c3f6a);
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge-role {
+        display: inline-block;
+        background: #eee;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        text-transform: capitalize;
+    }
+
+    .profile-actions {
+        padding: 1rem 2rem 2rem;
+        text-align: center;
+    }
+
+    .btn-edit {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 10px;
+        background: #ccc;
+        color: white;
+        font-weight: 700;
+        cursor: not-allowed;
+    }
+</style>
