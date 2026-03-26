@@ -1,0 +1,334 @@
+@page "/login"
+@using RestaurantOrderingSystem.Services
+@using Microsoft.AspNetCore.Components
+@using RestaurantOrderingSystem.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthProvider
+@rendermode InteractiveServer
+
+<div class="login-page-wrapper">
+    <div class="login-card">
+
+        
+        <div class="oauth-section">
+            <button class="btn-oauth github" @onclick='() => HandleOAuth("GitHub")'>
+                <i class="bi bi-github"></i>
+                Continue with GitHub
+            </button>
+        </div>
+
+        <div class="divider">
+            <span>OR LOGIN WITH EMAIL</span>
+        </div>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label><i class="bi bi-envelope"></i> Email Address</label>
+                <input type="email" @bind="email" @bind:event="oninput" @onkeyup="HandleKeyUp"
+                       placeholder="your@email.com" />
+            </div>
+
+            <div class="form-group">
+                <label><i class="bi bi-lock"></i> Password</label>
+                <input type="password" @bind="password" @bind:event="oninput" @onkeyup="HandleKeyUp"
+                       placeholder="••••••••" />
+            </div>
+
+            @* Alert for Error Messages *@
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert-error">
+                    <i class="bi bi-exclamation-triangle"></i> @errorMessage
+                </div>
+            }
+
+            <button class="btn-submit" @onclick="HandleLogin" disabled="@isProcessing">
+                @if (isProcessing)
+                {
+                    <span class="spinner-border spinner-border-sm"></span> <span>AUTHENTICATING...</span>
+                }
+                else
+                {
+                    <span>LET'S EAT!</span>
+                }
+            </button>
+        </div>
+
+        <div class="login-footer">
+            <p>New here? <span class="highlight" @onclick="GoToRegister">Create an Account</span></p>
+            <p class="guest-link">Don't want an account? <span @onclick="OrderAsGuest">Order as Guest</span></p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    private string email = "";
+    private string password = "";
+    private string? errorMessage;
+    private bool isProcessing = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthStateTask != null)
+        {
+            var authState = await AuthStateTask;
+            if (authState.User.Identity?.IsAuthenticated ?? false)
+            {
+                Nav.NavigateTo("/menu");
+            }
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        isProcessing = true;
+        var user = await AuthService.LoginAsync(email, password);
+
+        if (user != null && !string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.Email))
+        {
+            var session = new UserSession
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Role = user.Role
+            };
+
+            var customProvider = (CustomAuthStateProvider)AuthProvider;
+            // Await this so the storage is saved before we navigate away!
+            await customProvider.UpdateAuthenticationState(session);
+
+            var destination = !string.IsNullOrEmpty(ReturnUrl) ? ReturnUrl : "/menu";
+            Nav.NavigateTo(destination);
+        }
+        else
+        {
+            errorMessage = "Invalid email or password.";
+        }
+        isProcessing = false;
+    }
+
+    private async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await HandleLogin();
+        }
+    }
+
+    private void HandleOAuth(string provider)
+    {
+        // Typically redirects to a Controller or Endpoint handling the challenge
+        Nav.NavigateTo($"api/auth/login/{provider}?returnUrl={ReturnUrl}", forceLoad: true);
+    }
+
+    private void GoToRegister() => Nav.NavigateTo("/register");
+    
+    private void OrderAsGuest() => Nav.NavigateTo("/menu");
+}
+
+<style>
+    :root {
+        --bz-purple: #3c3f6a;
+        --bz-purple-dark: #2d2f50;
+        --bz-yellow: #ffcc33;
+        --bz-red: #ff4747;
+        --bz-red-dark: #b33030;
+    }
+
+    .login-page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 170px);
+        padding: 2rem;
+    }
+
+    .login-card {
+        background: white;
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(60, 63, 106, 0.15);
+        width: 100%;
+        max-width: 450px;
+        border-top: 5px solid var(--bz-yellow);
+    }
+
+    /* Header & Logo */
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .login-header h2 {
+        font-weight: 900;
+        color: var(--bz-purple);
+        letter-spacing: -1px;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .login-header h2 span {
+        color: var(--bz-yellow);
+    }
+
+    .login-header p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.6rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--bz-purple);
+        text-transform: uppercase;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fdfdfd;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--bz-purple);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(60, 63, 106, 0.1);
+    }
+
+    /* Buttons */
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--bz-red);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 5px 0 var(--bz-red-dark);
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 0 var(--bz-red-dark);
+        background-color: #ff5e5e;
+    }
+
+    .btn-submit:active {
+        transform: translateY(3px);
+        box-shadow: 0 0px 0 var(--bz-red-dark);
+    }
+
+    /* OAuth */
+    .oauth-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-oauth {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0.8rem;
+        background: white;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #444;
+        transition: all 0.2s;
+    }
+
+    .btn-oauth i {
+        font-size: 1.2rem;
+    }
+
+    .btn-oauth:hover {
+        background: #f8f8f8;
+        border-color: #ddd;
+    }
+
+    /* Divider */
+    .divider {
+        margin: 2rem 0;
+        text-align: center;
+        position: relative;
+    }
+
+    .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #eee;
+    }
+
+    .divider span {
+        background: white;
+        padding: 0 15px;
+        color: #999;
+        font-size: 0.75rem;
+        font-weight: 700;
+        position: relative;
+    }
+
+    /* Footer */
+    .login-footer {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .highlight {
+        color: var(--bz-red);
+        cursor: pointer;
+        font-weight: 800;
+        text-decoration: underline;
+    }
+
+    .guest-link {
+        margin-top: 10px;
+        font-size: 0.85rem;
+    }
+
+    .guest-link span {
+        color: var(--bz-purple);
+        font-weight: 700;
+        cursor: pointer;
+    }
+</style>

@@ -1,10 +1,25 @@
 using RestaurantOrderingSystem.Components;
+using RestaurantOrderingSystem.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Database & Auth Services
+builder.Services.AddSingleton<MongoDBService>();
+builder.Services.AddScoped<AuthService>();
+
+// 2. Authentication State Management
+builder.Services.AddOptions();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<ProtectedSessionStorage>();
+
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
 var app = builder.Build();
 
