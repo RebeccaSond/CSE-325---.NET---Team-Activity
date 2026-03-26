@@ -6,7 +6,7 @@ using RestaurantOrderingSystem.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("MongoDb")
-    ?? throw new InvalidOperationException("Connection string not found");
+    ?? throw new InvalidOperationException("Connection string not found!!");
 
 var mongoClient = new MongoClient(connectionString);
 
