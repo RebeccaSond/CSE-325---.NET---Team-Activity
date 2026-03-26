@@ -1,0 +1,40 @@
+@page "/cart"
+@using RestaurantOrderingSystem.Models
+@using RestaurantOrderingSystem.Services
+
+@inject CartService CartService
+
+<h3>Your Cart</h3>
+
+@if (CartService.Items.Count == 0)
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <ul>
+        @foreach (var item in CartService.Items)
+        {
+            <li>
+                <strong>@item.Name</strong> - $@item.Price
+                <button @onclick="() => Remove(item)">Remove</button>
+            </li>
+        }
+    </ul>
+
+    <p><strong>Total:</strong> $@CartService.Total</p>
+
+    <button @onclick="ClearCart">Clear Cart</button>
+}
+
+@code {
+    void Remove(MenuItem item)
+    {
+        CartService.Remove(item);
+    }
+
+    void ClearCart()
+    {
+        CartService.Clear();
+    }
+}

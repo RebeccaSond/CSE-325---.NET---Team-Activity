@@ -1,0 +1,159 @@
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-main">
+            @* Brand Block *@
+            <div class="footer-block brand-info">
+                <div class="footer-logo">
+                    <img src="/images/BiteZone_Logo.jpg" alt="BiteZone Logo" />
+                    <h4><span>BITE</span>ZONE</h4>
+                </div>
+                <p>The best bites in the zone, delivered fresh to your screen.</p>
+            </div>
+
+            @* Quick Links Block *@
+            <div class="footer-block">
+                <h5>QUICK LINKS</h5>
+                <ul>
+                    <li><a href="menu"><i class="bi bi-chevron-right"></i> MENU</a></li>
+                    <li><a href="login"><i class="bi bi-chevron-right"></i> ADMIN PORTAL</a></li>
+                    <li><a href="privacy"><i class="bi bi-chevron-right"></i> PRIVACY POLICY</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; @DateTime.Now.Year BITEZONE ORDERING SYSTEM.</p>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background-color: var(--bite-purple);
+        color: white;
+        border-top: 3px solid var(--bite-yellow);
+        margin-top: auto;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-main {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    /* Block Styling to match NavMenu */
+    .footer-block {
+        flex: 1;
+        min-width: 250px;
+        padding: 3rem 2rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer-block:last-child {
+        border-right: none;
+    }
+
+    .brand-info p {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin-top: 1rem;
+    }
+
+    /* Logo Styling */
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .footer-logo img {
+        height: 45px;
+        width: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--bite-yellow);
+    }
+
+    .footer-logo h4 {
+        font-weight: 900;
+        margin: 0;
+        letter-spacing: -1px;
+    }
+
+    .footer-logo h4 span {
+        color: var(--bite-yellow);
+    }
+
+    /* Link Styling */
+    .footer-block h5 {
+        color: var(--bite-yellow);
+        font-weight: 800;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1px;
+    }
+
+    .footer-block ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-block ul li {
+        margin-bottom: 10px;
+    }
+
+    .footer-block a {
+        color: white;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-block a i {
+        font-size: 0.7rem;
+        color: var(--bite-yellow);
+    }
+
+    .footer-block a:hover {
+        color: var(--bite-yellow);
+        transform: translateX(5px);
+    }
+
+    /* Footer Bottom Bar */
+    .footer-bottom {
+        background-color: var(--bite-purple-dark);
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Mobile Tweaks */
+    @@media (max-width: 768px) {
+        .footer-block {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            text-align: center;
+            align-items: center;
+        }
+        
+        .footer-logo { justify-content: center; }
+        .footer-block a { justify-content: center; }
+    }
+</style>
