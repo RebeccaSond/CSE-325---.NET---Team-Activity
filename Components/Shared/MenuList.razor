@@ -15,29 +15,29 @@
         <div class="row">
             @foreach (var p in products)
             {   
+                // Grid Div
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card h-100 shadow hover-scale">
+
+                    @* Cards to Display Products(Itemns) on Menu List *@
+                    <div class="card h-100 shadow hover-scale" data-bs-toggle="modal" data-bs-target="#productModal">
 
                         <div class="ratio ratio-1x1">
-                            <img src="@p.ImageUrl" class="card-img-top object-fit-cover" alt="@p.Name">
+                            <img src="@p.ImageUrl" class="card-img-top object-fit-cover" alt="@p.Name" loading="lazy">
                         </div>
 
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-center">@p.Name</h5>
 
-                            <div class="mt-auto">
-                                <div class="row p-2 gap-2">
-                                    <a href="#" class="btn btn-primary col">Description</a>
-                                    <a href="#" class="btn btn-primary col">Add to Cart</a>
-                                </div>
-                            </div>
 
                         </div>
 
                     </div>
+                    
                 </div>
             }
         </div>
+
+        <ProductModal />
     }
 
 </div>
