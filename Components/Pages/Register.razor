@@ -107,7 +107,7 @@
         try
         {
             isProcessing = true;
-            userModel.Role = "customer"; // Ensure they aren't registering as Admin
+            userModel.Role = UserRole.customer; // Ensure they aren't registering as Admin
 
             var success = await AuthService.RegisterAsync(userModel);
 

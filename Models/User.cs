@@ -3,6 +3,13 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace RestaurantOrderingSystem.Models;
 
+public enum UserRole
+{
+    admin,
+    customer
+}
+
+[BsonIgnoreExtraElements]
 public class User
 {
     [BsonId]
@@ -18,6 +25,10 @@ public class User
     [BsonElement("name")]
     public string Name { get; set; } = null!;
 
+    [BsonElement("authProvider")]
+    public string AuthProvider { get; set; } = "local";
+
     [BsonElement("role")]
-    public string Role { get; set; } = "customer"; // Default role
+    [BsonRepresentation(BsonType.String)]
+    public UserRole Role { get; set; } = UserRole.customer;
 }

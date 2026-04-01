@@ -1,0 +1,169 @@
+@page "/privacy"
+@rendermode InteractiveServer
+
+<div class="privacy-container">
+    <div class="privacy-card">
+        <div class="privacy-header">
+            <i class="bi bi-shield-shaded"></i>
+            <h1>Privacy <span>Policy</span></h1>
+            <p>Last Updated: April 2026</p>
+        </div>
+
+        <div class="privacy-body">
+            <section>
+                <h2>1. Information We Collect</h2>
+                <p>To provide a seamless ordering experience at <strong>BiteZone</strong>, we collect the following
+                    information:</p>
+                    <ul>
+                        <li><strong>Account Data:</strong> Name, email address, and encrypted passwords.</li>
+                        <li><strong>Order History:</strong> Details of the dishes you've enjoyed and your transaction
+                            totals.</li>
+                            <li><strong>Session Data:</strong> We use Protected Browser Storage to keep you logged in across
+                                sessions.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2>2. How We Use Your Data</h2>
+                            <p>Your data is used strictly for the following purposes:</p>
+                            <ul>
+                                <li>Processing and managing your food orders.</li>
+                                <li>Authenticating your access to the "My Orders" and "Profile" sections.</li>
+                                <li>Allowing Admin users to manage menu items and user accounts effectively.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2>3. Data Security</h2>
+                            <p>We take your security seriously. <strong>BiteZone</strong> employs the following protections:</p>
+                            <ul>
+                                <li><strong>Password Hashing:</strong> We use <strong>BCrypt</strong> to ensure your plain-text
+                                    password is never stored in our database.</li>
+                                    <li><strong>Encrypted Storage:</strong> Sensitive session tokens are encrypted using ASP.NET Data
+                                        Protection before being stored in your browser.</li>
+                                        <li><strong>Secure Database:</strong> Our MongoDB instance is configured with role-based access
+                                            control.</li>
+                                        </ul>
+                                    </section>
+
+                                    <section>
+                                        <h2>4. Third-Party Services</h2>
+                                        <p>If you choose to "Continue with GitHub," we receive your public profile name and email address from
+                                            GitHub to create your account. We do not receive or store your GitHub password.</p>
+                                        </section>
+
+                                        <section class="contact-note">
+                                            <p>Questions about your data? Reach out to us via the <strong>Contact</strong> page.</p>
+                                        </section>
+                                    </div>
+        
+                                    <div class="privacy-footer">
+                                        <button class="btn-back" @onclick="GoHome">Back to Menu</button>
+                                    </div>
+                                </div>
+                            </div>
+
+@code {
+    [Inject] NavigationManager Nav { get; set; } = default!;
+    private void GoHome() => Nav.NavigateTo("/menu");
+}
+
+<style>
+    .privacy-container {
+        display: flex;
+        justify-content: center;
+        padding: 3rem 1rem;
+        background-color: #f4f6f9;
+        min-height: 90vh;
+    }
+
+    .privacy-card {
+        background: white;
+        width: 100%;
+        max-width: 800px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .privacy-header {
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+
+    .privacy-header i {
+        font-size: 3rem;
+        color: var(--bite-yellow, #ffcc33);
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .privacy-header h1 span {
+        color: var(--bite-yellow, #ffcc33);
+    }
+
+    .privacy-header p {
+        opacity: 0.8;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .privacy-body {
+        padding: 3rem;
+        color: #444;
+        line-height: 1.6;
+    }
+
+    .privacy-body h2 {
+        color: var(--bite-purple, #3c3f6a);
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+
+    .privacy-body section {
+        margin-bottom: 2.5rem;
+    }
+
+    .privacy-body ul {
+        padding-left: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .privacy-body li {
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-note {
+        background: #fff9e6;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 5px solid var(--bite-yellow, #ffcc33);
+        font-style: italic;
+    }
+
+    .privacy-footer {
+        padding: 2rem;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-back {
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-back:hover {
+        background: var(--bite-red, #ff4747);
+        transform: translateY(-2px);
+    }
+</style>

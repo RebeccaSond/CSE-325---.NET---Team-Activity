@@ -79,9 +79,18 @@
         if (AuthStateTask != null)
         {
             var authState = await AuthStateTask;
-            if (authState.User.Identity?.IsAuthenticated ?? false)
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated ?? false)
             {
-                Nav.NavigateTo("/menu");
+                if (user.IsInRole("admin"))
+                {
+                    Nav.NavigateTo("/admin");
+                }
+                else
+                {
+                    Nav.NavigateTo("/menu");
+                }
             }
         }
     }
@@ -89,6 +98,7 @@
     private async Task HandleLogin()
     {
         isProcessing = true;
+        errorMessage = null;
         var user = await AuthService.LoginAsync(email, password);
 
         if (user != null && !string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.Email))
@@ -98,15 +108,25 @@
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                Role = user.Role
+                Role = user.Role.ToString()
             };
 
             var customProvider = (CustomAuthStateProvider)AuthProvider;
-            // Await this so the storage is saved before we navigate away!
+        
+            // 1. Persist the session
             await customProvider.UpdateAuthenticationState(session);
 
-            var destination = !string.IsNullOrEmpty(ReturnUrl) ? ReturnUrl : "/menu";
-            Nav.NavigateTo(destination);
+            // 2. Role-Based Redirection Logic
+            if (session.Role.Equals("admin", StringComparison.OrdinalIgnoreCase))
+            {
+                Nav.NavigateTo("/admin");
+            }
+            else
+            {
+                // If it's a customer, respect the ReturnUrl or go to menu
+                var destination = !string.IsNullOrEmpty(ReturnUrl) ? ReturnUrl : "/menu";
+                Nav.NavigateTo(destination);
+            }
         }
         else
         {
