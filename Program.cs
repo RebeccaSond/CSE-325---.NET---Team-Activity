@@ -21,6 +21,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<MenuListService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
