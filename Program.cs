@@ -2,6 +2,29 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using RestaurantOrderingSystem.Components;
 using RestaurantOrderingSystem.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. Database & Auth Services
+builder.Services.AddSingleton<MongoDBService>();
+builder.Services.AddScoped<AuthService>();
+
+// 2. Authentication State Management
+builder.Services.AddOptions();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CustomAuth";
+}).AddCookie("CustomAuth");
+
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<ProtectedSessionStorage>();
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +40,7 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<MenuListService>();

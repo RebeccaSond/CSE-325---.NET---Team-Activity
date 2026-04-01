@@ -1,4 +1,8 @@
 ﻿@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@using RestaurantOrderingSystem.Services
+@using RestaurantOrderingSystem.Models
+@inject NavigationManager Nav
 
 <div class="navbar-container">
     <div class="nav-brand">
@@ -27,9 +31,9 @@
                 <i class="bi bi-book"></i>
                 <span>MENU</span>
             </NavLink>
-            <NavLink class="nav-block" href="orders" @onclick="CloseMenu">
-                <i class="bi bi-bag-heart"></i>
-                <span>MY ORDERS</span>
+            <NavLink class="nav-block" href="contact" @onclick="CloseMenu">
+                <i class="bi bi-chat-dots"></i>
+                <span>CONTACT</span>
             </NavLink>
             <NavLink class="nav-block" href="about" @onclick="CloseMenu">
                 <i class="bi bi-info-circle"></i>
@@ -38,12 +42,32 @@
         </nav>
 
         <div class="nav-right">
-            <NavLink class="nav-block login-block" href="login" @onclick="CloseMenu">
-                <i class="bi bi-person"></i>
-                <span>LOG IN</span>
-            </NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    @* This shows ONLY when logged in *@
+                    <NavLink class="nav-block" href="orders" @onclick="CloseMenu">
+                        <i class="bi bi-bag-heart"></i>
+                        <span>MY ORDERS</span>
+                    </NavLink>
+                    <NavLink class="nav-block" href="profile">
+                        <i class="bi bi-person-check"></i>
+                        <span>@context.User.Identity?.Name</span>
+                    </NavLink>
+                    <NavLink class="nav-block" @onclick="Logout" href="javascript:void(0)">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>LOGOUT</span>
+                    </NavLink>
+                </Authorized>
+                <NotAuthorized>
+                    @* This shows ONLY when logged out *@
+                    <NavLink class="nav-block login-block" href="login">
+                        <i class="bi bi-person"></i>
+                        <span>LOG IN</span>
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
 
-            <NavLink class="nav-block cart-block" href="cart" @onclick="CloseMenu">
+            <NavLink class="nav-block cart-block" href="cart">
                 <div class="cart-wrapper">
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge">0</span>
@@ -56,6 +80,14 @@
 
 @code {
     private bool collapseNavMenu = true;
+    [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
+
+    private async Task Logout()
+    {
+        var customProvider = (CustomAuthStateProvider)AuthProvider;
+        await customProvider.UpdateAuthenticationState(null);
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
 
     private void ToggleNavMenu()
     {
@@ -106,7 +138,6 @@
     .logo-img {
         height: 50px;
         width: 50px;
-        border-radius: 50%;
     }
 
     .brand-text {
