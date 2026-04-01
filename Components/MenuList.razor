@@ -1,0 +1,33 @@
+@using RestaurantOrderingSystem.Models
+@using RestaurantOrderingSystem.Services
+@inject MenuListService MenuListSvc
+
+<div>
+
+    <h1>Testing</h1>
+
+    @if (products == null)
+    {
+        <p>Loading...</p>
+    } 
+    else
+    {
+        @foreach (var p in products)
+        {
+            <p>@p.Name</p>
+        }
+    }
+
+
+</div>
+
+
+@code{
+
+    private List<Product> products = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await MenuListSvc.GetProductsAsync();
+    }
+}

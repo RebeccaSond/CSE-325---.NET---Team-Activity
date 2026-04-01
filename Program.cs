@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using RestaurantOrderingSystem.Components;
 using RestaurantOrderingSystem.Services;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -23,8 +25,25 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("MongoDb")
+    ?? throw new InvalidOperationException("Connection string not found!!");
+
+var mongoClient = new MongoClient(connectionString);
+
+builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
+{
+    options.UseMongoDB(mongoClient, "CSE325");
+});
+
+// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents(options => options.DetailedErrors = true);
+
+builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<MenuListService>();
 
 var app = builder.Build();
 
