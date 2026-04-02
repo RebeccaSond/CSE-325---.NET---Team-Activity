@@ -9,12 +9,12 @@
     @if (products == null)
     {
         <p>Loading...</p>
-    } 
+    }
     else
     {
         <div class="row">
             @foreach (var p in products)
-            {   
+            {
                 // Grid Div
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
 
@@ -43,25 +43,24 @@
 </div>
 
 <style>
-
-    .hover-scale{
+    .hover-scale {
         transition: all 0.3s ease;
     }
 
-    .hover-scale:hover{
+    .hover-scale:hover {
         transform: scale(1.05) translateY(-5px);
     }
-
 </style>
 
 
 
-@code{
+@code {
 
     private List<Product> products = new();
 
     protected override async Task OnInitializedAsync()
     {
         products = await MenuListSvc.GetProductsAsync();
+        Console.WriteLine($"Productos cargados: {products.Count}");
     }
 }
