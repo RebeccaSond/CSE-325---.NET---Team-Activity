@@ -1,0 +1,247 @@
+@page "/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using RestaurantOrderingSystem.Models
+@using RestaurantOrderingSystem.Services
+@using System.Security.Claims
+@inject NavigationManager Nav
+@inject MenuListService MenuService
+@inject AuthService UsersService
+@rendermode InteractiveServer
+
+@* We don't use [Authorize] attribute here because we want to handle the redirect manually to avoid the "Account/Login" URL *@
+
+<div class="admin-container">
+    @if (isAdmin)
+    {
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <i class="bi bi-shield-lock"></i>
+                <span>BiteZone Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="@(currentTab == "products" ? "active" : "")" @onclick='() => currentTab = "products"'>
+                    <i class="bi bi-egg-fried"></i> Products
+                </button>
+                <button class="@(currentTab == "users" ? "active" : "")" @onclick='() => currentTab = "users"'>
+                    <i class="bi bi-people"></i> Users
+                </button>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            @if (currentTab == "products")
+            {
+                <section class="admin-section">
+                    <div class="section-header">
+                        <h2>Manage Menu (@products.Count)</h2>
+                        <button class="btn-add"><i class="bi bi-plus-lg"></i> Add Dish</button>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in products)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>$@item.Price</td>
+                                    <td>
+                                        <button class="btn-icon edit"><i class="bi bi-pencil"></i></button>
+                                        <button class="btn-icon delete" @onclick="() => DeleteProduct(item.Id.ToString())">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </section>
+            }
+            else if (currentTab == "users")
+            {
+                <section class="admin-section">
+                    <h2>System Users (@users.Count)</h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in users)
+                            {
+                                <tr>
+                                    <td>@user.Name</td>
+                                    <td>@user.Email</td>
+                                    <td><span class="badge-role">@user.Role</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </section>
+            }
+        </main>
+    }
+    else
+    {
+        <div class="loading-screen">
+            <div class="spinner-border text-primary"></div>
+            <p>Checking Permissions...</p>
+        </div>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    private string currentTab = "products";
+    private bool isAdmin = false;
+    
+    // Data lists from DB
+    private List<Product> products = new();
+    private List<User> users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthStateTask == null) 
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        var authState = await AuthStateTask;
+        var user = authState.User;
+
+        // Check if Authenticated AND is Admin
+        if (user.Identity != null && user.Identity.IsAuthenticated && user.IsInRole("admin"))
+        {
+            isAdmin = true;
+            await LoadData();
+        }
+        else
+        {
+            // If not admin or not logged in, force a clean redirect to /login
+            Nav.NavigateTo("/login");
+        }
+    }
+
+    private async Task LoadData()
+    {
+        // Fetching real data from your services
+        //products = await MenuService.GetAllProductsAsync();
+        users = await UsersService.GetAllUsersAsync();
+    }
+
+    private async Task DeleteProduct(string? id)
+    {
+        if (string.IsNullOrEmpty(id)) return;
+        //await MenuService.DeleteProductAsync(id);
+        await LoadData();
+    }
+}
+
+<style>
+    .admin-container {
+        display: flex;
+        min-height: 90vh;
+        background: #f4f6f9;
+    }
+
+    .admin-sidebar {
+        width: 260px;
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+        padding: 2rem 0;
+    }
+
+    .sidebar-header {
+        padding: 0 2rem 2rem;
+        font-size: 1.2rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-nav button {
+        width: 100%;
+        padding: 1.2rem 2rem;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: left;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .sidebar-nav button.active,
+    .sidebar-nav button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--bite-yellow, #ffcc33);
+        border-left: 4px solid var(--bite-yellow);
+    }
+
+    .admin-main {
+        flex-grow: 1;
+        padding: 2rem;
+    }
+
+    .admin-table {
+        width: 100%;
+        background: white;
+        border-radius: 15px;
+        border-collapse: collapse;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .admin-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #888;
+    }
+
+    .admin-table td {
+        padding: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .table-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .btn-add {
+        background: var(--bite-yellow);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .badge-admin {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+    }
+</style>

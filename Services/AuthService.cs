@@ -44,4 +44,19 @@ public class AuthService
 
         return null;
     }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        try
+        {
+            // Find(_ => true) tells MongoDB to return every document in the collection
+            return await _dbService.Users.Find(_ => true).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log the error as needed
+            Console.WriteLine($"Error fetching users: {ex.Message}");
+            return new List<User>();
+        }
+    }
 }
