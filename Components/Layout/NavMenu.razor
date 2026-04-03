@@ -1,4 +1,7 @@
 ﻿@rendermode InteractiveServer
+@using RestaurantOrderingSystem.Services
+@inject CartService CartService
+@inject UIStateService UIState
 
 <div class="navbar-container">
     <div class="nav-brand">
@@ -54,7 +57,7 @@
             <NavLink class="nav-block cart-block" href="cart" @onclick="CloseMenu">
                 <div class="cart-wrapper">
                     <i class="bi bi-cart3"></i>
-                    <span class="cart-badge">0</span>
+                    <span class="cart-badge">@CartService.Items.Count</span>
                 </div>
                 <span>CART</span>
             </NavLink>
@@ -64,6 +67,11 @@
 
 @code {
     private bool collapseNavMenu = true;
+
+    protected override void OnInitialized()
+    {
+        UIState.OnChange += StateHasChanged;
+    }
 
     private void ToggleNavMenu()
     {

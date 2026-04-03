@@ -5,6 +5,7 @@ using RestaurantOrderingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 var connectionString = builder.Configuration.GetConnectionString("MongoDb")
     ?? throw new InvalidOperationException("Connection string not found!!");
 
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
     options.UseMongoDB(mongoClient, "CSE325");
 });
 
-//EF Core will create a restaurant.db in database
+//EF Core will create a restaurant.db in databasedo
 // builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 // {
 //     options.UseSqlite("Data Source=restaurant.db");
@@ -25,9 +26,10 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<CartService>();
+builder.Services.AddSingleton<CartService>();
 builder.Services.AddScoped<MenuListService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddSingleton<UIStateService>();
 
 var app = builder.Build();
 
