@@ -1,43 +1,49 @@
+@rendermode InteractiveServer
+@using Microsoft.VisualBasic
 @using RestaurantOrderingSystem.Models
 @using RestaurantOrderingSystem.Services
 @inject MenuListService MenuListSvc
+@inject CategoryService CategorySvc
 
 <div>
-
-    <h1>Testing</h1>
-
-    @if (products == null)
+    @if (groupedProducts == null)
     {
         <p>Loading...</p>
     }
     else
     {
-        <div class="row">
-            @foreach (var p in products)
-            {
-                // Grid Div
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        @foreach (var group in groupedProducts!)
+        {
+            <h1>@group.Key</h1>
 
-                    @* Cards to Display Products(Itemns) on Menu List *@
-                    <div class="card h-100 shadow hover-scale" data-bs-toggle="modal" data-bs-target="#productModal">
+            <div class="row">
+                @foreach (var p in group)
+                {
 
-                        <div class="ratio ratio-1x1">
-                            <img src="@p.ImageUrl" class="card-img-top object-fit-cover" alt="@p.Name" loading="lazy">
+                    @* Grid Div *@
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+
+                        @* Cards to Display Products(Itemns) on Menu List *@
+                        
+                        <div class="card h-100 shadow hover-scale" data-bs-toggle="modal" data-bs-target=".productModal"
+                             @onclick="() => getProdIdAsString = p.Id.ToString()">
+
+                            <div class="ratio ratio-1x1">
+                                <img src="@p.ImageUrl" class="card-img-top object-fit-cover" alt="@p.Name" loading="lazy">
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-center">@p.Name <span>$@p.Price</span></h5>
+                            </div>
+
                         </div>
-
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-center">@p.Name</h5>
-
-
-                        </div>
-
-                    </div>
                     
-                </div>
-            }
-        </div>
+                    </div>
+                }
+            </div>
+        }
 
-        <ProductModal />
+        <ProductModal prodId="@getProdIdAsString" />
     }
 
 </div>
@@ -52,15 +58,21 @@
     }
 </style>
 
-
-
 @code {
-
-    private List<Product> products = new();
-
+    private List<Product> products = new List<Product>();
+    private List<Product> productsWithCategory = new List<Product>();
+    private IEnumerable<IGrouping<string, Product>>? groupedProducts;
+    private string? getProdIdAsString;
+        
     protected override async Task OnInitializedAsync()
     {
-        products = await MenuListSvc.GetProductsAsync();
-        Console.WriteLine($"Productos cargados: {products.Count}");
+        productsWithCategory = await MenuListSvc.GetAllProductsWithCategoryAsync();
+
+        groupedProducts = productsWithCategory
+            .Where(p => p.Category != null)
+            .OrderBy(p => p.Category!.DisplayOrder)
+            .ThenBy(p => p.Name)
+            .GroupBy(p => p.Category!.Name);
     }
+
 }
