@@ -26,11 +26,11 @@
     @* The menu content is controlled by the 'show-menu' class *@
     <div class="nav-content @(collapseNavMenu ? "" : "show-menu")">
         <nav class="main-nav">
-            <NavLink class="nav-block" href="menu" @onclick="CloseMenu" Match="NavLinkMatch.All">
+            <NavLink class="nav-block" href="/" @onclick="CloseMenu" Match="NavLinkMatch.All">
                 <i class="bi bi-book"></i>
                 <span>MENU</span>
             </NavLink>
-            <NavLink class="nav-block" href="orders" @onclick="CloseMenu">
+            <NavLink class="nav-block" href="cart" @onclick="CloseMenu">
                 <i class="bi bi-bag-heart"></i>
                 <span>MY ORDERS</span>
             </NavLink>
