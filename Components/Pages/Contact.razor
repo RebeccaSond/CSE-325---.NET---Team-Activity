@@ -1,0 +1,200 @@
+@page "/contact"
+@rendermode InteractiveServer
+
+<div class="contact-container">
+    <div class="contact-card">
+        <div class="contact-info">
+            <h2>Get in <span>Touch</span></h2>
+            <p>Have a question about your order or just want to say hi? We'd love to hear from you!</p>
+            
+            <div class="info-item">
+                <i class="bi bi-geo-alt-fill"></i>
+                <div>
+                    <strong>Location</strong>
+                    <p>123 Flavor Street, Foodville</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="bi bi-telephone-fill"></i>
+                <div>
+                    <strong>Phone</strong>
+                    <p>+1 (555) BITE-ZONE</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="bi bi-envelope-fill"></i>
+                <div>
+                    <strong>Email</strong>
+                    <p>support@bitezone.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            @if (submitted)
+            {
+                <div class="success-message">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h3>Message Sent!</h3>
+                    <p>Thanks for reaching out. We'll get back to you faster than a pizza delivery!</p>
+                    <button class="btn-submit" @onclick="() => submitted = false">Send Another</button>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" @bind="contactName" placeholder="Enter your name" />
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" @bind="contactEmail" placeholder="your@email.com" />
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea @bind="contactMessage" rows="4" placeholder="How can we help?"></textarea>
+                </div>
+
+                <button class="btn-submit" @onclick="HandleSubmit" disabled="@isSending">
+                    @if (isSending)
+                    {
+                        <span class="spinner-border spinner-border-sm"></span> <span>SENDING...</span>
+                    }
+                    else
+                    {
+                        <span>SEND MESSAGE</span>
+                    }
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string contactName = "";
+    private string contactEmail = "";
+    private string contactMessage = "";
+    private bool isSending = false;
+    private bool submitted = false;
+
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(contactName) || string.IsNullOrWhiteSpace(contactEmail)) return;
+
+        isSending = true;
+        // Simulate an API call
+        await Task.Delay(1500);
+        
+        isSending = false;
+        submitted = true;
+        
+        // Reset fields
+        contactName = "";
+        contactEmail = "";
+        contactMessage = "";
+    }
+}
+
+<style>
+    .contact-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 2rem;
+        background-color: #f8f9fa;
+    }
+
+    .contact-card {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        background: white;
+        max-width: 900px;
+        width: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-info {
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+        padding: 3rem;
+    }
+
+    .contact-info h2 span {
+        color: var(--bite-yellow, #ffcc33);
+    }
+
+    .info-item {
+        display: flex;
+        gap: 15px;
+        margin-top: 2rem;
+    }
+
+    .info-item i {
+        font-size: 1.5rem;
+        color: var(--bite-yellow);
+    }
+
+    .contact-form {
+        padding: 3rem;
+        background: white;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--bite-purple);
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #eee;
+        border-radius: 10px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background: var(--bite-red, #ff4747);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: #ff5e5e;
+        transform: translateY(-2px);
+    }
+
+    .success-message {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .success-message i {
+        font-size: 4rem;
+        color: #4caf50;
+    }
+
+    @@media (max-width: 768px) {
+        .contact-card {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,0 +1,139 @@
+@page "/about"
+@rendermode InteractiveServer
+
+<div class="about-wrapper">
+    <section class="hero-banner">
+        <div class="hero-content">
+            <h1>Our <span>Story</span></h1>
+            <p class="lead">From a University project to your dinner table.</p>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+                <h2 class="section-title">What is <span>BiteZone</span>?</h2>
+                <p>
+                    BiteZone started as a challenge to redefine how we order food online.
+                    Built with <strong>Blazor .NET 8</strong> and <strong>MongoDB</strong>,
+                    it's more than just a menu—it's a high-performance system designed for
+                    speed, security, and a seamless user experience.
+                </p>
+                <p>
+                    Whether you're an Admin managing inventory or a Customer hunting for
+                    the perfect burger, BiteZone provides the "Zone" where flavor meets technology.
+                </p>
+            </div>
+            <div class="col-md-6 text-center">
+                <div class="about-icon-box">
+                    <i class="bi bi-rocket-takeoff"></i>
+                    <h3>Fast Delivery</h3>
+                </div>
+            </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="row text-center stats-row">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="bi bi-code-slash"></i>
+                    <h4>Full Stack</h4>
+                    <p>C# & MongoDB</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="bi bi-lightning-fill"></i>
+                    <h4>Real-Time</h4>
+                    <p>Blazor Server</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <i class="bi bi-shield-check"></i>
+                    <h4>Secure</h4>
+                    <p>BCrypt & RBAC</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-wrapper {
+        background-color: #fff;
+        padding-bottom: 5rem;
+    }
+
+    .hero-banner {
+        background: linear-gradient(rgba(60, 63, 106, 0.85), rgba(60, 63, 106, 0.85)),
+            url('/images/restaurant-bg.jpg') center/cover;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .hero-content h1 span {
+        color: var(--bite-yellow, #ffcc33);
+    }
+
+    .section-title {
+        font-weight: 800;
+        color: var(--bite-purple, #3c3f6a);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title span {
+        color: var(--bite-red, #ff4747);
+    }
+
+    .about-icon-box {
+        background: var(--bite-purple, #3c3f6a);
+        color: white;
+        padding: 3rem;
+        border-radius: 20px;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .about-icon-box:hover {
+        transform: translateY(-10px);
+        background: var(--bite-purple-dark, #2d2f50);
+    }
+
+    .about-icon-box i {
+        font-size: 4rem;
+        color: var(--bite-yellow, #ffcc33);
+    }
+
+    .stats-row {
+        margin-top: 4rem;
+    }
+
+    .stat-item i {
+        font-size: 2.5rem;
+        color: var(--bite-red, #ff4747);
+    }
+
+    .stat-item h4 {
+        font-weight: 700;
+        margin-top: 1rem;
+        color: var(--bite-purple, #3c3f6a);
+    }
+
+    .divider {
+        margin: 4rem 0;
+        opacity: 0.1;
+    }
+</style>

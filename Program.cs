@@ -2,13 +2,34 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using RestaurantOrderingSystem.Components;
 using RestaurantOrderingSystem.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
+DotNetEnv.Env.Load();
+
+// 2. Authentication State Management
+builder.Services.AddOptions();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CustomAuth";
+}).AddCookie("CustomAuth");
+
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
+builder.Services.AddScoped<ProtectedSessionStorage>();
 
 var connectionString = builder.Configuration.GetConnectionString("MongoDb")
     ?? throw new InvalidOperationException("Connection string not found!!");
 
 var mongoClient = new MongoClient(connectionString);
+
+// 1. Database & Auth Services
+builder.Services.AddSingleton<MongoDBService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 {
@@ -17,7 +38,7 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<MenuListService>();
