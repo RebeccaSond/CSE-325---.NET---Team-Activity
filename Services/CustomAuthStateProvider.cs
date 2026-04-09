@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using RestaurantOrderingSystem.Models;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace RestaurantOrderingSystem.Services;
 

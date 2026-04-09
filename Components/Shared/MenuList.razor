@@ -6,7 +6,7 @@
 @inject CategoryService CategorySvc
 
 <div>
-    @if (groupedProducts == null)
+    @if (isLoading)
     {
         <p>Loading...</p>
     } 
@@ -32,7 +32,12 @@
                         >
 
                             <div class="ratio ratio-1x1">
+                                @if(isLoading){
+                                    <p>CORINTHIANS</p>
+                                }
+                                else{
                                 <img src="@p.ImageUrl" class="card-img-top object-fit-cover" alt="@p.Name" loading="lazy">
+                                }
                             </div>
 
                             <div class="card-body d-flex flex-column">
@@ -58,6 +63,7 @@
     }
 
     .hover-scale:hover{
+        cursor: pointer;
         transform: scale(1.05) translateY(-5px);
     }
 
@@ -68,9 +74,11 @@
     private List<Product> productsWithCategory = new List<Product>();
     private IEnumerable<IGrouping<string, Product>>? groupedProducts;
     private string? getProdIdAsString;
+    private bool isLoading = true;
         
     protected override async Task OnInitializedAsync()
     {
+        isLoading = false;
         productsWithCategory = await MenuListSvc.GetAllProductsWithCategoryAsync();
 
         groupedProducts = productsWithCategory

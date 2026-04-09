@@ -27,14 +27,14 @@ var connectionString = builder.Configuration.GetConnectionString("MongoDb")
 
 var mongoClient = new MongoClient(connectionString);
 
-// 1. Database & Auth Services
-builder.Services.AddSingleton<MongoDBService>();
-builder.Services.AddScoped<AuthService>();
-
 builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 {
     options.UseMongoDB(mongoClient, "CSE325");
 });
+
+// 1. Database & Auth Services
+builder.Services.AddSingleton<MongoDBService>();
+builder.Services.AddScoped<AuthService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -59,6 +59,7 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

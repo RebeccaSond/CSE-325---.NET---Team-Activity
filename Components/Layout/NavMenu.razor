@@ -6,7 +6,7 @@
 
 <div class="navbar-container">
     <div class="nav-brand">
-        <a href="" @onclick="CloseMenu">
+        <a href="/menu" @onclick="CloseMenu">
             <img src="/images/BiteZone_Logo.jpg" alt="BiteZone Logo" class="logo-img" />
             <span class="brand-text"><span>Bite</span>Zone</span>
         </a>
@@ -39,14 +39,6 @@
                 <i class="bi bi-info-circle"></i>
                 <span>ABOUT US</span>
             </NavLink>
-
-            @* Only *Admin* users can add some product *@
-            @* We need to build an IF block here. Just waiting Login process to be done *@
-            <NavLink class="nav-block" href="addProduct" @onclick="CloseMenu">
-                <i class="bi bi-plus-circle"></i>
-                <span>ADD PRODUCT</span>
-            </NavLink>
-
         </nav>
 
         <div class="nav-right">

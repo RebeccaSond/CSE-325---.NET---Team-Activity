@@ -1,4 +1,6 @@
+@page "/"
 @page "/login"
+@layout LoginLayout
 @using RestaurantOrderingSystem.Services
 @using Microsoft.AspNetCore.Components
 @using RestaurantOrderingSystem.Models
@@ -7,6 +9,7 @@
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider AuthProvider
 @rendermode InteractiveServer
+
 
 <div class="login-page-wrapper">
     <div class="login-card">
@@ -62,7 +65,7 @@
     </div>
 </div>
 
-@code {
+@code{
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
