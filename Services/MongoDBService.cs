@@ -22,5 +22,7 @@ public class MongoDBService
         _database = client.GetDatabase(Environment.GetEnvironmentVariable("DB_NAME"));
     }
 
+    public IMongoDatabase Database => _database;
+
     public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
 }
