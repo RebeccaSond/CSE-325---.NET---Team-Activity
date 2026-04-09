@@ -1,8 +1,13 @@
+@rendermode InteractiveServer
 @page "/cart"
 @using RestaurantOrderingSystem.Models
 @using RestaurantOrderingSystem.Services
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject CartService CartService
+@inject OrderService OrderService
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
 
 <h3>Your Cart</h3>
 
@@ -24,17 +29,47 @@ else
 
     <p><strong>Total:</strong> $@CartService.Total</p>
 
+    <button @onclick="Checkout">Checkout</button>
     <button @onclick="ClearCart">Clear Cart</button>
 }
 
 @code {
+    private async Task Checkout()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated != true)
+        {
+            // Redirect to login or show message
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        var userIdClaim = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
+        {
+            // Handle error
+            return;
+        }
+
+        await OrderService.CreateOrderAsync(userIdClaim, CartService.Items, CartService.Total);
+        CartService.Clear();
+        StateHasChanged();
+
+        // Navigate to orders page
+        Nav.NavigateTo("/orders");
+    }
+
     void Remove(MenuItem item)
     {
         CartService.Remove(item);
+        StateHasChanged();
     }
 
     void ClearCart()
     {
         CartService.Clear();
+        StateHasChanged();
     }
 }

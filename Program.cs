@@ -22,6 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 
+
 var connectionString = builder.Configuration.GetConnectionString("MongoDb")
     ?? throw new InvalidOperationException("Connection string not found!!");
 
@@ -36,13 +37,21 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
     options.UseMongoDB(mongoClient, "CSE325");
 });
 
+//EF Core will create a restaurant.db in databasedo
+// builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
+// {
+//     options.UseSqlite("Data Source=restaurant.db");
+// });
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
-builder.Services.AddScoped<CartService>();
+builder.Services.AddSingleton<CartService>();
 builder.Services.AddScoped<MenuListService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddSingleton<UIStateService>();
 
 var app = builder.Build();
 

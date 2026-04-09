@@ -2,6 +2,11 @@
 @using RestaurantOrderingSystem.Models
 @using RestaurantOrderingSystem.Services
 @inject MenuListService MenuLisSvc
+@inject CartService CartService
+@inject UIStateService UIState
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
 
 <div id="productModal" class="modal fade productModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -19,23 +24,53 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Add to Cart</button>
+                <button type="button" class="btn btn-primary" @onclick="AddToCart">
+                    Add to Cart
+                </button>
             </div>
 
         </div>
     </div>
-</div>  
+</div>
 
-@code{
-    [Parameter] public string prodId {get; set;} = string.Empty;
+@code {
+    [Parameter] public string prodId { get; set; } = string.Empty;
 
     private Product? prodFromMenu;
     
     protected override async Task OnParametersSetAsync()
     {
-        if(!string.IsNullOrEmpty(prodId))
+        if (!string.IsNullOrEmpty(prodId))
         {
             prodFromMenu = await MenuLisSvc.GetProductByIdAsync(ObjectId.Parse(prodId));
         }
     }
+
+    async Task AddToCart()
+    {
+        if (prodFromMenu != null)
+        {
+            // Convert Product → MenuItem
+            var item = new MenuItem
+            {
+                Id = 0,
+                Name = prodFromMenu.Name,
+                Description = prodFromMenu.Description,
+                Price = prodFromMenu.Price,
+                ImageUrl = prodFromMenu.ImageUrl
+            };
+
+            CartService.Add(item);
+
+            //notify navmenu that needs to be updated
+            Nav.NavigateTo(Nav.Uri, forceLoad: false);
+
+            //close modal automatically
+            await JS.InvokeVoidAsync("closeModal", "productModal");
+
+            await JS.InvokeVoidAsync("location.reload");
+
+        }
+    }
+
 }
