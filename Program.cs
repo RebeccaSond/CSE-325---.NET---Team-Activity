@@ -50,6 +50,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<CartService>();
 builder.Services.AddScoped<MenuListService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddSingleton<UIStateService>();
 
 var app = builder.Build();
