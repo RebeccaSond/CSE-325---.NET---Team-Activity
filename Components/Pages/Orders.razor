@@ -30,13 +30,20 @@
                     <p>Date: @order.OrderDate.ToLocalTime()</p>
                     <p>Total: $@order.Total</p>
                     <div>
-                        <label>Status:</label>
-                        <select @bind="order.Status">
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                        <button @onclick="() => UpdateOrderStatus(order.Id, order.Status)">Update Status</button>
+                        @if(isAdmin)
+                        {   
+                            <label>Status:</label>
+                            <select @bind="order.Status">
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <button @onclick="() => UpdateOrderStatus(order.Id, order.Status)">Update Status</button>
+                        }
+                        else
+                        {
+                            <label>Status: @order.Status</label>
+                        }
                     </div>
                     <ul>
                         @foreach (var item in order.Items)
@@ -57,8 +64,22 @@
 @code {
     private List<Order>? orders;
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+    private bool isAdmin = false;
+    private List<User> users = new();
+
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateTask;
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated && user.IsInRole("admin"))
+        {
+            isAdmin = true;
+            await LoadOrders();
+        }
+
         await LoadOrders();
     }
 

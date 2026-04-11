@@ -1,6 +1,7 @@
 @page "/admin"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using MongoDB.Bson
 @using RestaurantOrderingSystem.Models
 @using RestaurantOrderingSystem.Services
 @using System.Security.Claims
@@ -44,13 +45,16 @@
                                 <th>Category</th>
                                 <th>Price</th>
                                 <th>Actions</th>
-                            </tr>
+                            </tr>   
                         </thead>
                         <tbody>
                             @foreach (var item in products)
-                            {
+                            { 
+                                var category = categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                                
                                 <tr>
                                     <td>@item.Name</td>
+                                    <td>@category?.Name</td>
                                     <td>$@item.Price</td>
                                     <td>
                                         <button class="btn-icon edit"><i class="bi bi-pencil"></i></button>
@@ -109,7 +113,9 @@
     
     // Data lists from DB
     private List<Product> products = new();
+    private List<Category> categories = new();
     private List<User> users = new();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -138,8 +144,10 @@
     private async Task LoadData()
     {
         // Fetching real data from your services
-        //products = await MenuService.GetAllProductsAsync();
+        products = await MenuService.GetProductsAsync();
         users = await UsersService.GetAllUsersAsync();
+        categories = await MenuService.GetCategoriesAsync();
+
     }
 
     private async Task DeleteProduct(string? id)

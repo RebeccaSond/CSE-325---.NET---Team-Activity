@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using MongoDB.Bson;
 using RestaurantOrderingSystem.Models;
 
@@ -34,5 +35,10 @@ public class MenuListService
         }
 
         return products;
+    }
+
+    public async Task<List<Category>> GetCategoriesAsync()
+    {
+        return await _context.Categories.ToListAsync();
     }
 }
