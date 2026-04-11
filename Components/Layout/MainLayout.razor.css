@@ -4,9 +4,7 @@
   --bite-yellow: #ffcc33;
   --bite-white: #ffffff;
   --bite-purple: #313352;
-  --bite-yellow: #ffcc33;
-  --bite-red: #ff4747;
-  --bite-white: #ffffff;
+  /* Cleaned up duplicates */
 }
 
 .page {
@@ -18,12 +16,23 @@
 main {
   flex: 1;
   background-color: #fafafa;
+  /* Ensure content doesn't get hidden behind sticky header on very small devices */
+  display: flex;
+  flex-direction: column;
 }
 
 .content {
-  padding: 2rem;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  /* Responsive padding: smaller on mobile, larger on desktop */
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 2rem;
+  }
 }
 
 .main-header {
@@ -32,17 +41,41 @@ main {
   position: sticky;
   top: 0;
   z-index: 1000;
+  /* Ensure header doesn't overflow horizontally */
+  width: 100%;
 }
 
-/* Error UI */
+/* --- Mobile Specific Tweaks --- */
+@media (max-width: 576px) {
+  .content {
+    overflow-x: scroll;
+  }
+}
+
+/* Error UI - Adjusted for better visibility on mobile */
 #blazor-error-ui {
   background: var(--bite-yellow);
+  color: var(--bite-navy);
   bottom: 0;
   position: fixed;
   width: 100%;
   z-index: 2000;
-  padding: 0.8rem;
+  padding: 1rem;
   display: none;
   text-align: center;
   font-weight: bold;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#blazor-error-ui .reload {
+  margin: 0 10px;
+  color: var(--bite-navy);
+  text-decoration: underline;
+}
+
+#blazor-error-ui .dismiss {
+  cursor: pointer;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
 }

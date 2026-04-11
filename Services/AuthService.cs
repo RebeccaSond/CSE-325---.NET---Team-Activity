@@ -59,4 +59,21 @@ public class AuthService
             return new List<User>();
         }
     }
+
+    public async Task DeleteUserAsync(string id)
+    {
+        await _dbService.Users.DeleteOneAsync(u => u.Id == id);
+    }
+
+    public async Task UpdateUserRoleAsync(string userId, UserRole newRole)
+    {
+        var update = Builders<User>.Update.Set(u => u.Role, newRole);
+        await _dbService.Users.UpdateOneAsync(u => u.Id == userId, update);
+    }
+    public async Task UpdateUserAsync(User user)
+    {
+        // Assuming your User model uses the string Id as the key for MongoDB
+        var filter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
+        await _dbService.Users.ReplaceOneAsync(filter, user);
+    }
 }

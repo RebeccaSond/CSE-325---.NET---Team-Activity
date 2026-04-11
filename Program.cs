@@ -22,8 +22,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 
-var connectionString = builder.Configuration.GetConnectionString("MongoDb")
-    ?? throw new InvalidOperationException("Connection string not found!!");
+var connectionString = Environment.GetEnvironmentVariable("MONGO_URI");
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 
 var mongoClient = new MongoClient(connectionString);
 
@@ -33,7 +33,7 @@ builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
 {
-    options.UseMongoDB(mongoClient, "CSE325");
+    options.UseMongoDB(mongoClient, dbName ?? "CSE325");
 });
 
 // Add services to the container.

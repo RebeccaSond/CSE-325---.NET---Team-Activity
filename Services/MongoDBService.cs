@@ -23,4 +23,11 @@ public class MongoDBService
     }
 
     public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
+    public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
+    public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
+
+    internal IMongoCollection<T>? GetCollection<T>(string v)
+    {
+        throw new NotImplementedException();
+    }
 }
