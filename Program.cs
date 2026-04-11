@@ -36,12 +36,21 @@ builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
     options.UseMongoDB(mongoClient, dbName ?? "CSE325");
 });
 
+//EF Core will create a restaurant.db in databasedo
+// builder.Services.AddDbContext<RestaurantOrderingDbContext>(options =>
+// {
+//     options.UseSqlite("Data Source=restaurant.db");
+// });
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
-builder.Services.AddScoped<CartService>();
+builder.Services.AddSingleton<CartService>();
 builder.Services.AddScoped<MenuListService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddSingleton<UIStateService>();
 
 var app = builder.Build();
 

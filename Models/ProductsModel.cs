@@ -16,19 +16,19 @@ namespace RestaurantOrderingSystem.Models
 
         [Column("description")]
         public string? Description { get; set; }
-
+      
         [Column("price")]
-        public required decimal Price { get; set; }
+        required public decimal Price { get; set; }
+      
+        [Column("isAvailable")]
+        public bool? isAvailable { get; set; }
+      
+        [Column("imageUrl")]
+        public string? ImageUrl { get; set; }
 
         [Column("categoryId")]
         public ObjectId? CategoryId { get; set; }
-
-        [Column("isAvailable")]
-        public bool? isAvailable { get; set; }
-
-        [Column("imageUrl")]
-        public string? ImageUrl { get; set; }
-        
+      
         [NotMapped]
         public Category? Category { get; set; }
     }

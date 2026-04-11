@@ -47,39 +47,22 @@ public class MenuListService
             await _context.SaveChangesAsync();
         }
     }
+    
+    public async Task<Product?> GetProductByIdAsync(ObjectId id)
+    {
+        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+    }
 
     public async Task<List<Product>> GetAllProductsWithCategoryAsync()
     {
-        try
+        var products = await _context.Products.ToListAsync();
+        var categories = await _context.Categories.ToListAsync();
+
+        foreach (var product in products)
         {
-            // 1. Verify connection by checking if we can even reach the collection
-            if (!_context.Database.CanConnect())
-            {
-                Console.WriteLine("DEBUG: EF Core cannot connect to MongoDB.");
-            }
-
-            var products = await _context.Products.ToListAsync();
-            Console.WriteLine($"DEBUG: EF Core found {products?.Count ?? 0} products in 'Products' collection.");
-
-            var categories = await _context.Categories.ToListAsync();
-
-            if (products != null)
-            {
-                foreach (var product in products)
-                {
-                    product.Category = categories.FirstOrDefault(c => c.Id == product.CategoryId);
-                }
-            }
-
-            return products ?? new List<Product>();
+            product.Category = categories.FirstOrDefault(c => c.Id == product.CategoryId);
         }
-        catch (Exception ex)
-        {
-            // This will catch Mapping errors (e.g., if BsonId is not recognized)
-            Console.WriteLine($"DB Error in GetAllProducts: {ex.Message}");
-            if (ex.InnerException != null)
-                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-            return new List<Product>();
-        }
+
+        return products;
     }
 }
