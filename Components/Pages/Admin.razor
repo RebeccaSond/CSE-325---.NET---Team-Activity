@@ -1,6 +1,7 @@
 @page "/admin"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using MongoDB.Bson
 @using RestaurantOrderingSystem.Models
 @using RestaurantOrderingSystem.Services
 @using System.Security.Claims
@@ -35,7 +36,7 @@
                 <section class="admin-section">
                     <div class="section-header">
                         <h2>Manage Menu (@products.Count)</h2>
-                        <button class="btn-add"><i class="bi bi-plus-lg"></i> Add Dish</button>
+                        <button class="btn-add" @onclick="OpenAddModal"><i class="bi bi-plus-lg"></i> Add Dish</button>
                     </div>
                     <table class="admin-table">
                         <thead>
@@ -51,10 +52,13 @@
                             {
                                 <tr>
                                     <td>@item.Name</td>
+                                    <td>@(item.Category?.Name ?? "Uncategorized")</td>
                                     <td>$@item.Price</td>
                                     <td>
-                                        <button class="btn-icon edit"><i class="bi bi-pencil"></i></button>
-                                        <button class="btn-icon delete" @onclick="() => DeleteProduct(item.Id.ToString())">
+                                        <button class="btn-icon edit" @onclick="() => OpenEditModal(item)">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn-icon delete" @onclick='() => ConfirmDelete(item.Id.ToString(), "product", item.Name)'>
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
@@ -67,13 +71,16 @@
             else if (currentTab == "users")
             {
                 <section class="admin-section">
-                    <h2>System Users (@users.Count)</h2>
+                    <div class="section-header">
+                        <h2>System Users (@users.Count)</h2>
+                    </div>
                     <table class="admin-table">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,7 +89,25 @@
                                 <tr>
                                     <td>@user.Name</td>
                                     <td>@user.Email</td>
-                                    <td><span class="badge-role">@user.Role</span></td>
+                                    <td>
+                                        <span class="badge @(user.Role == UserRole.admin ? "badge-admin" : "badge-customer")">
+                                            @user.Role
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn-icon edit" title="Toggle Role" @onclick="() => ToggleUserRole(user)">
+                                                <i class="bi bi-arrow-left-right"></i>
+                                            </button>
+
+                                            @if (user.Role != UserRole.admin && !string.IsNullOrEmpty(user.Id))
+                                            {
+                                                <button class="btn-icon delete" @onclick='() => ConfirmDelete(user.Id, "user", user.Name)'>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -100,20 +125,102 @@
     }
 </div>
 
+@* --- MODAL OVERLAY --- *@
+@if (showModal)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (modalType == "delete")
+                    {
+                        <p>Are you sure you want to delete <strong>@targetName</strong>?</p>
+                        <p class="text-danger small">This action cannot be undone.</p>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control" @bind="editingProduct.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" @onchange="HandleCategoryChange">
+                                <option value="">-- Select Category --</option>
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Id" selected="@(cat.Id == editingProduct.CategoryId)">
+                                        @cat.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" @bind="editingProduct.Price" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Product Image</label>
+                            <InputFile OnChange="HandleFileSelected" class="form-control" accept="image/*" />
+                            @if (!string.IsNullOrEmpty(editingProduct.ImageUrl))
+                            {
+                                <div class="mt-2">
+                                    <img src="@editingProduct.ImageUrl" style="width: 100px; border-radius: 5px;" />
+                                </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" @bind="editingProduct.Description"></textarea>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                    @if (modalType == "delete")
+                    {
+                        <button class="btn btn-danger" @onclick="HandleDelete">Confirm Delete</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" @onclick="SaveProduct">Save Changes</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }
 
     private string currentTab = "products";
     private bool isAdmin = false;
-    
-    // Data lists from DB
+
     private List<Product> products = new();
     private List<User> users = new();
+    private List<Category> categories = new();
+    private const string DefaultImageUrl = "https://via.placeholder.com/150?text=No+Image";
+
+    // Modal State
+    private bool showModal = false;
+    private string modalType = ""; 
+    private string modalTitle = "";
+    private string targetId = "";
+    private string targetName = "";
+    private string deleteContext = ""; 
+
+    private Product editingProduct = new Product { Id = ObjectId.Empty, Name = "", Price = 0 };
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthStateTask == null) 
+        if (AuthStateTask == null)
         {
             Nav.NavigateTo("/login");
             return;
@@ -137,111 +244,266 @@
 
     private async Task LoadData()
     {
-        // Fetching real data from your services
-        //products = await MenuService.GetAllProductsAsync();
-        users = await UsersService.GetAllUsersAsync();
+        try
+        {
+            users = await UsersService.GetAllUsersAsync();
+            var fetchedProducts = await MenuService.GetAllProductsWithCategoryAsync();
+            products = fetchedProducts ?? new();
+            categories = await MenuService.GetCategoriesAsync();
+            StateHasChanged();
+        }
+        catch (Exception ex) { Console.WriteLine($"Error: {ex.Message}"); }
     }
 
-    private async Task DeleteProduct(string? id)
+    // --- Action Methods ---
+
+    private void OpenAddModal()
     {
-        if (string.IsNullOrEmpty(id)) return;
-        //await MenuService.DeleteProductAsync(id);
+        editingProduct = new Product { Id = ObjectId.GenerateNewId(), Name = "", Price = 0 };
+        modalTitle = "Add New Product";
+        modalType = "form";
+        showModal = true;
+    }
+
+    private void OpenEditModal(Product p)
+    {
+        editingProduct = p; 
+        modalTitle = "Edit Product";
+        modalType = "form";
+        showModal = true;
+    }
+
+    private void ConfirmDelete(string id, string type, string name)
+    {
+        targetId = id;
+        deleteContext = type;
+        targetName = name;
+        modalTitle = $"Delete {type}";
+        modalType = "delete";
+        showModal = true;
+    }
+
+    private void CloseModal() => showModal = false;
+
+    private async Task SaveProduct()
+    {
+        if (string.IsNullOrWhiteSpace(editingProduct.ImageUrl))
+            editingProduct.ImageUrl = DefaultImageUrl;
+
+        try
+        {
+            if (products.Any(p => p.Id == editingProduct.Id))
+                await MenuService.UpdateProductAsync(editingProduct);
+            else
+                await MenuService.AddProductAsync(editingProduct);
+
+            await LoadData();
+            CloseModal();
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    private async Task HandleDelete()
+    {
+        if (deleteContext == "product")
+            await MenuService.DeleteProductAsync(targetId);
+        else
+            await UsersService.DeleteUserAsync(targetId);
+
         await LoadData();
+        CloseModal();
+    }
+
+    private async Task ToggleUserRole(User user)
+    {
+        try
+        {
+            user.Role = user.Role == UserRole.admin ? UserRole.customer : UserRole.admin;
+            await UsersService.UpdateUserAsync(user);
+            await LoadData();
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            var format = "image/png";
+            var resizedImage = await file.RequestImageFileAsync(format, 400, 400);
+            using var ms = new MemoryStream();
+            await resizedImage.OpenReadStream().CopyToAsync(ms);
+            editingProduct.ImageUrl = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+        }
+    }
+
+    private void HandleCategoryChange(ChangeEventArgs e)
+    {
+        var stringValue = e.Value?.ToString();
+        if (string.IsNullOrEmpty(stringValue)) editingProduct.CategoryId = null;
+        else if (ObjectId.TryParse(stringValue, out var result)) editingProduct.CategoryId = result;
     }
 }
 
 <style>
-    .admin-container {
-        display: flex;
-        min-height: 90vh;
-        background: #f4f6f9;
+    :root {
+        --sidebar-bg: #3c3f6a;
+        --accent-color: #ffcc33;
+        --bg-light: #f4f6f9;
     }
 
+    /* Layout */
+    .admin-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: var(--bg-light);
+    }
+
+    @@media (min-width: 992px) {
+        .admin-container { flex-direction: row; }
+    }
+
+    /* Sidebar */
     .admin-sidebar {
-        width: 260px;
-        background: var(--bite-purple, #3c3f6a);
+        width: 100%;
+        background: var(--sidebar-bg);
         color: white;
-        padding: 2rem 0;
+        padding: 1rem 0;
+        z-index: 100;
+    }
+
+    @@media (min-width: 992px) {
+        .admin-sidebar { width: 260px; padding: 2rem 0; }
     }
 
     .sidebar-header {
-        padding: 0 2rem 2rem;
-        font-size: 1.2rem;
+        padding: 0 1.5rem 1rem;
+        font-size: 1.1rem;
         font-weight: 800;
         display: flex;
         align-items: center;
         gap: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-nav {
+        display: flex;
+        overflow-x: auto;
+    }
+
+    @@media (min-width: 992px) {
+        .sidebar-nav { flex-direction: column; overflow-x: visible; }
     }
 
     .sidebar-nav button {
-        width: 100%;
-        padding: 1.2rem 2rem;
+        flex: 1;
+        padding: 1rem 1.5rem;
         background: none;
         border: none;
         color: rgba(255, 255, 255, 0.7);
-        text-align: left;
+        text-align: center;
         font-weight: 600;
-        cursor: pointer;
+        white-space: nowrap;
         transition: 0.3s;
+    }
+
+    @@media (min-width: 992px) {
+        .sidebar-nav button { text-align: left; }
     }
 
     .sidebar-nav button.active,
     .sidebar-nav button:hover {
         background: rgba(255, 255, 255, 0.1);
-        color: var(--bite-yellow, #ffcc33);
-        border-left: 4px solid var(--bite-yellow);
+        color: var(--accent-color);
     }
 
+    /* Main Content */
     .admin-main {
         flex-grow: 1;
-        padding: 2rem;
+        padding: 1rem;
+    }
+
+    @@media (min-width: 768px) {
+        .admin-main { padding: 2rem; }
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 { font-size: 1.5rem; margin: 0; }
+
+    /* Tables */
+    .table-responsive {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 0.5rem;
     }
 
     .admin-table {
         width: 100%;
-        background: white;
-        border-radius: 15px;
         border-collapse: collapse;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     }
 
     .admin-table th {
-        background: #f8f9fa;
+        background: #fafafa;
         padding: 1rem;
         text-align: left;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        color: #888;
+        color: #777;
+        border-bottom: 2px solid #f0f0f0;
     }
 
     .admin-table td {
         padding: 1rem;
-        border-top: 1px solid #eee;
+        border-bottom: 1px solid #f8f8f8;
+        vertical-align: middle;
     }
 
-    .table-img {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
+    /* User Info Formatting */
+    .user-info { display: flex; flex-direction: column; }
+    .user-name { font-weight: 700; color: #333; }
+    .user-email { font-size: 0.85rem; color: #888; }
 
+    /* Buttons & Badges */
     .btn-add {
-        background: var(--bite-yellow);
+        background: var(--accent-color);
         border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
         font-weight: 700;
-        cursor: pointer;
     }
 
-    .badge-admin {
-        background: #e3f2fd;
-        color: #1976d2;
-        padding: 4px 8px;
-        border-radius: 5px;
-        font-size: 0.8rem;
+    .badge-admin { background: #cfe2ff; color: #084298; padding: 0.35rem 0.65rem; border-radius: 50rem; font-size: 0.75rem; }
+    .badge-customer { background: #e2e3e5; color: #41464b; padding: 0.35rem 0.65rem; border-radius: 50rem; font-size: 0.75rem; }
+
+    .btn-icon {
+        border: none;
+        background: #f8f9fa;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-icon.edit { color: #0d6efd; }
+    .btn-icon.delete { color: #dc3545; }
+
+    /* Loading Overlay */
+    .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 60vh;
     }
 </style>
